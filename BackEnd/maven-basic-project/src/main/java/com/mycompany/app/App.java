@@ -11,22 +11,27 @@ public class App {
         SpringApplication.run(App.class, args);
     }
 
-
     @Bean
-    public CommandLineRunner probarBaseDeDatos(CocheRepository cocheRepository) {
+    public CommandLineRunner probarBaseDeDatos(
+            CocheRepository cocheRepository,
+            UsuarioRepository usuarioRepository,
+            MarcaRepository marcaRepository) {
         return args -> {
-            System.out.println("--- INICIANDO PRUEBA DE BASE DE DATOS ---");
 
-            // 1. Guardamos dos coches en la base de datos
-            cocheRepository.save(new Coche("Toyota", "Corolla", 25000.0));
-            cocheRepository.save(new Coche("Ford", "Mustang", 45000.0));
-            System.out.println("¡Coches guardados con éxito!");
+            marcaRepository.save(new Marca("Toyota", "Japón"));
+            marcaRepository.save(new Marca("Ford", "EEUU"));
 
-            // 2. Le pedimos al repositorio que nos devuelva todos los coches que existen
-            System.out.println("--- LISTA DE COCHES EN EL CONCESIONARIO ---");
-            for (Coche coche : cocheRepository.findAll()) {
-                System.out.println("ID: " + coche.getId() + " | " + coche.getMarca() + " " + coche.getModelo() + " -> " + coche.getPrecio() + "€");
-            }
+            cocheRepository.save(new Coche("Toyota", "Corolla", 25000.0, 2023, 5));
+            cocheRepository.save(new Coche("Ford", "Mustang", 45000.0, 2024, 2));
+
+            Usuario admin = new Usuario();
+            admin.setName("Admin");
+            admin.setEmail("admin@autoelite.com");
+            admin.setPassword("1234");
+            admin.setRol("ADMIN");
+            usuarioRepository.save(admin);
+
+            System.out.println("--- DATOS CARGADOS CORRECTAMENTE ---");
         };
     }
 }

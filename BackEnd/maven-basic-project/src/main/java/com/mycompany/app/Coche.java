@@ -15,18 +15,20 @@ public class Coche {
     private String marca;
     private String modelo;
     private double precio;
+    private int anio;
+    private int stock;
 
-    // Constructor vacío (Obligatorio para la base de datos)
-    public Coche() {}
+    public Coche() {
+    }
 
-    // Constructor con datos
-    public Coche(String marca, String modelo, double precio) {
+    public Coche(String marca, String modelo, double precio, int anio, int stock) {
         this.marca = marca;
         this.modelo = modelo;
         this.precio = precio;
+        this.anio = anio;
+        this.stock = stock;
     }
 
-    // Getters y Setters (Necesarios para poder leer y modificar los datos)
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getMarca() { return marca; }
@@ -35,4 +37,8 @@ public class Coche {
     public void setModelo(String modelo) { this.modelo = modelo; }
     public double getPrecio() { return precio; }
     public void setPrecio(double precio) { this.precio = precio; }
+    public int getAnio() { return anio; }
+    public void setAnio(int anio) { this.anio = anio; }
+    public int getStock() { return stock; }
+    public void setStock(int stock) { this.stock = stock; }
 }

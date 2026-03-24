@@ -1,5 +1,7 @@
 package com.mycompany.app;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,19 +23,34 @@ public class CocheController {
 
     // Obtener todos los coches
     @GetMapping
-    public List<Coche> obtenerTodosLosCoches() {
-        return cocheRepository.findAll();
+    public ResponseEntity<List<Coche>> obtenerTodosLosCoches() {
+        List<Coche> coches = cocheRepository.findAll();
+        if (!coches.isEmpty()) {
+            return new ResponseEntity<>(coches, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
     }
 
     // Obtener coche por ID
     @GetMapping("/{id}")
-    public Coche obtenerCocheID(@PathVariable Long id) {
-        return cocheRepository.findById(id).orElse(null);
+    public ResponseEntity<Coche> obtenerCocheID(@PathVariable Long id) {
+        Coche coche = cocheRepository.findById(id).orElse(null);
+        if (coche != null) {
+            return new ResponseEntity<>(coche, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     // Obtener coches por marca
     @GetMapping("/marca/{marca}")
-    public List<Coche> obtenerCochesMarca(@PathVariable String marca) {
-        return cocheRepository.findByMarca(marca);
+    public ResponseEntity<List<Coche>> obtenerCochesMarca(@PathVariable String marca) {
+        List<Coche> coches = cocheRepository.findByMarca(marca);
+        if (!coches.isEmpty()) {
+            return new ResponseEntity<>(coches, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
     }
 }

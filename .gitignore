@@ -28,3 +28,5 @@ Thumbs.db
 
 # Claude
 .claude/
+
+autoelite_db.mv.db

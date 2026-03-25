@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -62,4 +64,24 @@ public class CocheController {
         Coche nuevoCoche = cocheRepository.save(coche);
         return new ResponseEntity<>(nuevoCoche, HttpStatus.CREATED);
       }
+    
+
+    // PUT - Actualizar coche por ID
+    @PutMapping("/{id}")
+    public ResponseEntity<Coche> actualizarCoche(@PathVariable Long id, @RequestBody Coche cocheActualizado) {
+        Coche cocheExistente = cocheRepository.findById(id).orElse(null);
+
+        if (cocheExistente == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        cocheExistente.setMarca(cocheActualizado.getMarca());
+        cocheExistente.setModelo(cocheActualizado.getModelo());
+        cocheExistente.setPrecio(cocheActualizado.getPrecio());
+        cocheExistente.setAnio(cocheActualizado.getAnio());
+        cocheExistente.setStock(cocheActualizado.getStock());
+
+        Coche cocheGuardado = cocheRepository.save(cocheExistente);
+        return new ResponseEntity<>(cocheGuardado, HttpStatus.OK);
     }
+}

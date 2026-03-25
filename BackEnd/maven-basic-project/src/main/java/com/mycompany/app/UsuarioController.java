@@ -6,10 +6,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/usuarios")
+@RequestMapping({"/api/usuarios", "/api/clientes"})
 public class UsuarioController {
 
     private final UsuarioRepository usuarioRepository;
@@ -50,5 +53,23 @@ public class UsuarioController {
         } else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+    }
+
+
+    // POST - crear cliente/usuario
+    @PostMapping
+    public ResponseEntity<?> crearUsuario(@RequestBody Usuario usuario) {
+        Optional<Usuario> usuarioExistente = usuarioRepository.findByEmail(usuario.getEmail());
+
+        if (usuarioExistente.isPresent()) {
+            return new ResponseEntity<>("Ya existe un usuario con ese email", HttpStatus.CONFLICT);
+        }
+
+        if (usuario.getRol() == null || usuario.getRol().isBlank()) {
+            usuario.setRol("CLIENTE");
+        }
+
+        Usuario nuevoUsuario = usuarioRepository.save(usuario);
+        return new ResponseEntity<>(nuevoUsuario, HttpStatus.CREATED);
     }
 }

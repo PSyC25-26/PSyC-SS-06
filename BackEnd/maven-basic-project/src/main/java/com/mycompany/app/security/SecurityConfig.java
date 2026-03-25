@@ -38,13 +38,14 @@ public class SecurityConfig {
 
                 // Marcar aquí las rutas HTTP públicas se permiten a todos, el resto requieren autenticación para el acceso
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/usuarios/register/**").permitAll()
                 
                 .requestMatchers("/ruta/dos/**").permitAll()
                 .requestMatchers("/ruta/tres/**").permitAll()
                 // etc.
+                .requestMatchers("/error/**").permitAll() // permitir mostrar los errores correctamente
+                .requestMatchers("/h2-console/**").permitAll() // para testing, permitir ver base de datos
                 .requestMatchers("/api/usuarios").permitAll() // para testing, permitir ver todos los usuarios
-                .requestMatchers("/h2-console/**").permitAll() // permitir ver base de datos
-                .requestMatchers("/error").permitAll() // permitir mostrar los errores correctamente
                 
                 // NOTA: anyRequest tiene que ir al final para no overwrittear las anteriores
                 .anyRequest().hasRole("ADMIN") // Pedir autenticación de tipo ADMIN para el resto de rutas

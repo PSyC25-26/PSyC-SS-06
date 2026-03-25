@@ -20,27 +20,12 @@ public class AuthController {
     private final UserDetailsService userDetailsService;
     private final JwtService jwtService;
     private final UsuarioRepository usuarioRepository;
-    private final PasswordEncoder passwordEncoder;
 
-    // Actualizamos el constructor con los nuevos parámetros
     public AuthController(AuthenticationManager authenticationManager, UserDetailsService userDetailsService, JwtService jwtService, UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
         this.jwtService = jwtService;
         this.usuarioRepository = usuarioRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    // Registro de usuario
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestParam (required = true) String nombre, @RequestParam (required = true) String apellidos, @RequestParam (required = true) String email, @RequestParam (required = true) String password, @RequestParam (required = true) String telefono, @RequestParam (required = true) boolean esAdmin) {
-        Usuario usuario = new Usuario(nombre, apellidos, email, password, telefono, esAdmin);
-
-        // Encriptación contraseña
-        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-        
-        usuarioRepository.save(usuario);
-        return ResponseEntity.ok(usuario);
     }
 
     // login de usuario

@@ -2,10 +2,16 @@ package com.mycompany.app;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.mycompany.app.security.JwtService;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,8 +25,11 @@ public class UsuarioController {
 
     private final UsuarioRepository usuarioRepository;
 
-    public UsuarioController(UsuarioRepository usuarioRepository) {
+    private final PasswordEncoder passwordEncoder;
+
+    public UsuarioController(UsuarioRepository usuarioRepository, AuthenticationManager authenticationManager, UserDetailsService userDetailsService, JwtService jwtService, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // Obtener todos los usuarios
@@ -58,8 +67,12 @@ public class UsuarioController {
 
 
     // POST - crear cliente/usuario
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<?> crearUsuario(@RequestBody Usuario usuario) {
+
+        // Encriptación contraseña
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+
         Optional<Usuario> usuarioExistente = usuarioRepository.findByEmail(usuario.getEmail());
 
         if (usuarioExistente.isPresent()) {
@@ -75,7 +88,7 @@ public class UsuarioController {
 
 
     // PUT - actualizar cliente/usuario
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?> actualizarUsuario(@PathVariable Long id, @RequestBody Usuario datosActualizados) {
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
 
@@ -105,7 +118,7 @@ public class UsuarioController {
     }
 
     // DELETE - borrar cliente/usuario
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> eliminarUsuario(@PathVariable Long id) {
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
 

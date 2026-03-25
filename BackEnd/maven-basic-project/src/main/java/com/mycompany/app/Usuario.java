@@ -18,6 +18,13 @@ public class Usuario {
     private String rol;
 
     public Usuario() {}
+    
+    public Usuario(String name, String email, String password, String rol) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.rol = rol;
+    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

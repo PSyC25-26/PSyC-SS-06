@@ -33,15 +33,12 @@ public class AuthController {
 
     // Registro de usuario
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestParam (required = true) String name, @RequestParam (required = true) String email, @RequestParam (required = true) String password, @RequestParam (required = false) String rol) {
-        Usuario usuario = new Usuario(name, email, password, rol);
+    public ResponseEntity<?> register(@RequestParam (required = true) String nombre, @RequestParam (required = true) String apellidos, @RequestParam (required = true) String email, @RequestParam (required = true) String password, @RequestParam (required = true) String telefono, @RequestParam (required = true) boolean esAdmin) {
+        Usuario usuario = new Usuario(nombre, apellidos, email, password, telefono, esAdmin);
 
-        // Ecriptación contraseña
+        // Encriptación contraseña
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-        // Rol default "USER"
-        if(usuario.getRol() == null || usuario.getRol().isEmpty()){
-            usuario.setRol("USER");
-        }
+        
         usuarioRepository.save(usuario);
         return ResponseEntity.ok(usuario);
     }

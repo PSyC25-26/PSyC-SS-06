@@ -28,7 +28,7 @@ public class AppConfig {
                 .map(u -> User.builder()
                         .username(u.getEmail())
                         .password(u.getPassword())
-                        .roles(u.getRol() != null ? u.getRol() : "USER")
+                        .roles(u.isEsAdmin() ? "ADMIN" : "USER")
                         .build())
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
     }

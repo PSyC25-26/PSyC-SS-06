@@ -46,7 +46,8 @@ public class SecurityConfig {
                 .requestMatchers("/h2-console/**").permitAll() // permitir ver base de datos
                 .requestMatchers("/error").permitAll() // permitir mostrar los errores correctamente
                 
-                .anyRequest().authenticated() // Pedir autenticación para el resto de rutas
+                // NOTA: anyRequest tiene que ir al final para no overwrittear las anteriores
+                .anyRequest().hasRole("ADMIN") // Pedir autenticación de tipo ADMIN para el resto de rutas
             )
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Sin estado
             .authenticationProvider(authenticationProvider)

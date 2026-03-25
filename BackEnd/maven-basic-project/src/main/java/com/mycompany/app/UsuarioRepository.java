@@ -10,5 +10,4 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     // Consulta SQL se crea automáticamente:
     // SELECT * FROM usuario WHERE rol = ?
-    List<Usuario> findByRol(String rol);
 }

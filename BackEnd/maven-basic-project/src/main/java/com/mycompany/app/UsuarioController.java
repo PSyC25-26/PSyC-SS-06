@@ -40,15 +40,5 @@ public class UsuarioController {
         }
     }
 
-    // Obtener usuarios por rol
-    @GetMapping("/rol/{rol}")
-    public ResponseEntity<List<Usuario>> obtenerUsuariosPorRol(@PathVariable String rol) {
-        // Requiere: List<Usuario> findByRol(String rol); en UsuarioRepository
-        List<Usuario> usuarios = usuarioRepository.findByRol(rol);
-        if (!usuarios.isEmpty()) {
-            return new ResponseEntity<>(usuarios, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-    }
+
 }

@@ -4,14 +4,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.List;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
-    // Consulta SQL se crea automáticamente:
-    // SELECT * FROM usuario WHERE rol = ?
-    List<Usuario> findByRol(String rol);
-
+    List<Usuario> findByEsAdmin(boolean esAdmin);
     Optional<Usuario> findByEmail(String email);
+
 }

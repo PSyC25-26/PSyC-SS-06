@@ -5,6 +5,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+
 
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -52,5 +57,46 @@ public class CocheController {
         } else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+    }
+
+    // POST - Crear coche
+    @PostMapping
+    public ResponseEntity<Coche> crearCoche(@RequestBody Coche coche) {
+        Coche nuevoCoche = cocheRepository.save(coche);
+        return new ResponseEntity<>(nuevoCoche, HttpStatus.CREATED);
+      }
+    
+
+    // PUT - Actualizar coche por ID
+    @PutMapping("/{id}")
+    public ResponseEntity<Coche> actualizarCoche(@PathVariable Long id, @RequestBody Coche cocheActualizado) {
+        Coche cocheExistente = cocheRepository.findById(id).orElse(null);
+
+        if (cocheExistente == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        cocheExistente.setMarca(cocheActualizado.getMarca());
+        cocheExistente.setModelo(cocheActualizado.getModelo());
+        cocheExistente.setPrecio(cocheActualizado.getPrecio());
+        cocheExistente.setAnio(cocheActualizado.getAnio());
+        cocheExistente.setStock(cocheActualizado.getStock());
+
+        Coche cocheGuardado = cocheRepository.save(cocheExistente);
+        return new ResponseEntity<>(cocheGuardado, HttpStatus.OK);
+    }
+
+
+    // DELETE - Eliminar coche por ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarCoche(@PathVariable Long id) {
+        Coche cocheExistente = cocheRepository.findById(id).orElse(null);
+
+        if (cocheExistente == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        cocheRepository.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

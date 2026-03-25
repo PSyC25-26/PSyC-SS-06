@@ -6,10 +6,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/usuarios")
+@RequestMapping({"/api/usuarios", "/api/clientes"})
 public class UsuarioController {
 
     private final UsuarioRepository usuarioRepository;
@@ -41,14 +44,30 @@ public class UsuarioController {
     }
 
     // Obtener usuarios por rol
-    @GetMapping("/rol/{rol}")
-    public ResponseEntity<List<Usuario>> obtenerUsuariosPorRol(@PathVariable String rol) {
-        // Requiere: List<Usuario> findByRol(String rol); en UsuarioRepository
-        List<Usuario> usuarios = usuarioRepository.findByRol(rol);
+    @GetMapping("/admin/{esAdmin}")
+    public ResponseEntity<List<Usuario>> obtenerUsuariosPorAdmin(@PathVariable boolean esAdmin) {
+        List<Usuario> usuarios = usuarioRepository.findByEsAdmin(esAdmin);
         if (!usuarios.isEmpty()) {
             return new ResponseEntity<>(usuarios, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+    }
+
+
+    // POST - crear cliente/usuario
+    @PostMapping
+    public ResponseEntity<?> crearUsuario(@RequestBody Usuario usuario) {
+        Optional<Usuario> usuarioExistente = usuarioRepository.findByEmail(usuario.getEmail());
+
+        if (usuarioExistente.isPresent()) {
+            return new ResponseEntity<>("Ya existe un usuario con ese email", HttpStatus.CONFLICT);
+        }
+
+        if (!usuario.isEsAdmin()) {
+            usuario.setEsAdmin(false);
+        }
+        Usuario nuevoUsuario = usuarioRepository.save(usuario);
+        return new ResponseEntity<>(nuevoUsuario, HttpStatus.CREATED);
     }
 }

@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,5 +73,49 @@ public class UsuarioController {
 
         Usuario nuevoUsuario = usuarioRepository.save(usuario);
         return new ResponseEntity<>(nuevoUsuario, HttpStatus.CREATED);
+    }
+
+
+    // PUT - actualizar cliente/usuario
+    @PutMapping("/{id}")
+    public ResponseEntity<?> actualizarUsuario(@PathVariable Long id, @RequestBody Usuario datosActualizados) {
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
+
+        if (usuarioOptional.isEmpty()) {
+            return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
+        }
+
+        Usuario usuario = usuarioOptional.get();
+
+        // validar email duplicado solo si cambia
+        if (datosActualizados.getEmail() != null &&
+            !datosActualizados.getEmail().equals(usuario.getEmail())) {
+
+            Optional<Usuario> usuarioConEseEmail = usuarioRepository.findByEmail(datosActualizados.getEmail());
+            if (usuarioConEseEmail.isPresent()) {
+                return new ResponseEntity<>("Ya existe un usuario con ese email", HttpStatus.CONFLICT);
+            }
+        }
+
+        usuario.setNombre(datosActualizados.getNombre());
+        usuario.setEmail(datosActualizados.getEmail());
+        usuario.setPassword(datosActualizados.getPassword());
+        usuario.setRol(datosActualizados.getRol());
+
+        Usuario usuarioGuardado = usuarioRepository.save(usuario);
+        return new ResponseEntity<>(usuarioGuardado, HttpStatus.OK);
+    }
+
+    // DELETE - borrar cliente/usuario
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminarUsuario(@PathVariable Long id) {
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
+
+        if (usuarioOptional.isEmpty()) {
+            return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
+        }
+
+        usuarioRepository.deleteById(id);
+        return new ResponseEntity<>("Usuario eliminado correctamente", HttpStatus.OK);
     }
 }

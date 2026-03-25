@@ -17,7 +17,7 @@ export default function LoginPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -26,12 +26,53 @@ export default function LoginPage() {
       return;
     }
 
-    if (isRegister) {
-      console.log("Registro:", { nombre: formData.nombre, email: formData.email, password: formData.password });
-      alert("Registro exitoso");
-    } else {
-      console.log("Login:", { email: formData.email, password: formData.password });
-      alert("Login exitoso");
+    try {
+      if (isRegister) {
+        const response = await fetch("http://localhost:8080/api/usuarios/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+
+            email: formData.email,
+            password: formData.password,
+          }),
+        });
+
+        const data = await response.text();
+
+        if (!response.ok) {
+          setError(data || "Error al registrarse");
+          return;
+        }
+
+        alert("Registro exitoso");
+        setIsRegister(false);
+        setFormData({ nombre: "", email: "", password: "", confirmPassword: "" });
+      } else {
+        const response = await fetch("http://localhost:8080/api/usuarios/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+          }),
+        });
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok) {
+          setError("Error al iniciar sesión");
+          return;
+        }
+
+        alert("Login exitoso");
+        console.log("Usuario logueado:", data);
+      }
+    } catch (error) {
+      setError("No se pudo conectar con el servidor");
     }
   };
 

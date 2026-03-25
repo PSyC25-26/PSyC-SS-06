@@ -24,11 +24,14 @@ public class App {
             cocheRepository.save(new Coche("Toyota", "Corolla", 25000.0, 2023, 5));
             cocheRepository.save(new Coche("Ford", "Mustang", 45000.0, 2024, 2));
 
+
             Usuario admin = new Usuario();
-            admin.setName("Admin");
+            admin.setNombre("Admin");
+            admin.setApellidos("Principal");
             admin.setEmail("admin@autoelite.com");
             admin.setPassword("1234");
-            admin.setRol("ADMIN");
+            admin.setTelefono("600000000");
+            admin.setEsAdmin(true);
             usuarioRepository.save(admin);
 
             System.out.println("--- DATOS CARGADOS CORRECTAMENTE ---");

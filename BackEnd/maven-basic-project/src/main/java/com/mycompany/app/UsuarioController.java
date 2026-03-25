@@ -44,10 +44,9 @@ public class UsuarioController {
     }
 
     // Obtener usuarios por rol
-    @GetMapping("/rol/{rol}")
-    public ResponseEntity<List<Usuario>> obtenerUsuariosPorRol(@PathVariable String rol) {
-        // Requiere: List<Usuario> findByRol(String rol); en UsuarioRepository
-        List<Usuario> usuarios = usuarioRepository.findByRol(rol);
+    @GetMapping("/admin/{esAdmin}")
+    public ResponseEntity<List<Usuario>> obtenerUsuariosPorAdmin(@PathVariable boolean esAdmin) {
+        List<Usuario> usuarios = usuarioRepository.findByEsAdmin(esAdmin);
         if (!usuarios.isEmpty()) {
             return new ResponseEntity<>(usuarios, HttpStatus.OK);
         } else {
@@ -65,10 +64,9 @@ public class UsuarioController {
             return new ResponseEntity<>("Ya existe un usuario con ese email", HttpStatus.CONFLICT);
         }
 
-        if (usuario.getRol() == null || usuario.getRol().isBlank()) {
-            usuario.setRol("CLIENTE");
+        if (!usuario.isEsAdmin()) {
+            usuario.setEsAdmin(false);
         }
-
         Usuario nuevoUsuario = usuarioRepository.save(usuario);
         return new ResponseEntity<>(nuevoUsuario, HttpStatus.CREATED);
     }

@@ -98,7 +98,7 @@ public class UsuarioController {
         usuario.setNombre(datosActualizados.getNombre());
         usuario.setEmail(datosActualizados.getEmail());
         usuario.setPassword(datosActualizados.getPassword());
-        usuario.setRol(datosActualizados.getRol());
+        usuario.setEsAdmin(datosActualizados.isEsAdmin());
 
         Usuario usuarioGuardado = usuarioRepository.save(usuario);
         return new ResponseEntity<>(usuarioGuardado, HttpStatus.OK);

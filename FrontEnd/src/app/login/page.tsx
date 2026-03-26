@@ -30,48 +30,43 @@ export default function LoginPage() {
       if (isRegister) {
         const response = await fetch("http://localhost:8080/api/usuarios/register", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-
+            nombre: formData.nombre,
             email: formData.email,
             password: formData.password,
           }),
         });
 
-        const data = await response.text();
-
         if (!response.ok) {
+          const data = await response.text();
           setError(data || "Error al registrarse");
           return;
         }
 
-        alert("Registro exitoso");
+        alert("Registro exitoso. Ahora puedes iniciar sesión.");
         setIsRegister(false);
         setFormData({ nombre: "", email: "", password: "", confirmPassword: "" });
       } else {
-        const response = await fetch("http://localhost:8080/api/usuarios/login", {
+        const response = await fetch("http://localhost:8080/api/auth/login", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             email: formData.email,
             password: formData.password,
           }),
         });
-        const data = await response.json().catch(() => null);
 
         if (!response.ok) {
-          setError("Error al iniciar sesión");
+          setError("Correo o contraseña incorrectos");
           return;
         }
 
-        alert("Login exitoso");
-        console.log("Usuario logueado:", data);
+        const data = await response.json();
+        localStorage.setItem("token", data.token);
+        window.location.href = "/";
       }
-    } catch (error) {
+    } catch {
       setError("No se pudo conectar con el servidor");
     }
   };

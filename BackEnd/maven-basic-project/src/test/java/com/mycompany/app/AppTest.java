@@ -8,4 +8,9 @@ public class AppTest {
     public void shouldAnswerWithTrue() {
         assertTrue(true);
     }
+
+    // Smoke test, testea si la aplicación se carga correctamente
+    @Test
+    void contextLoads() {
+    }
 }

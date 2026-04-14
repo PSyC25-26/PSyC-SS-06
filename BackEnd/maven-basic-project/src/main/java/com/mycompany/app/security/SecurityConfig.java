@@ -17,6 +17,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -31,18 +36,29 @@ public class SecurityConfig {
     }
 
     @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable()) // Desactivar CSRF en pro de JWT
             .authorizeHttpRequests(auth -> auth
 
                 // Marcar aquí las rutas HTTP públicas se permiten a todos, el resto requieren autenticación para el acceso
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/usuarios/register/**").permitAll()
-                
-                .requestMatchers("/ruta/dos/**").permitAll()
-                .requestMatchers("/ruta/tres/**").permitAll()
-                // etc.
+                .requestMatchers("/api/coches/**").permitAll()
+                .requestMatchers("/api/marcas/**").permitAll()
                 .requestMatchers("/error/**").permitAll() // permitir mostrar los errores correctamente
                 .requestMatchers("/h2-console/**").permitAll() // para testing, permitir ver base de datos
                 .requestMatchers("/api/usuarios").permitAll() // para testing, permitir ver todos los usuarios

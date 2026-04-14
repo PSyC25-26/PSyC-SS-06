@@ -30,7 +30,9 @@ public class AuthController {
 
     // login de usuario
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestParam (required = true) String email, @RequestParam (required = true) String password) {
+    public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest) {
+        String email = loginRequest.get("email");
+        String password = loginRequest.get("password");
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
             final UserDetails userDetails = userDetailsService.loadUserByUsername(email);

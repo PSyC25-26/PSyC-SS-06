@@ -90,4 +90,55 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>jmeter</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.lazerycode.jmeter</groupId>
+            <artifactId>jmeter-maven-plugin</artifactId>
+            <version>3.8.0</version>
+            <executions>
+              <execution>
+                <id>configuration</id>
+                <goals>
+                  <goal>configure</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>jmeter-tests</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>jmeter</goal>
+                </goals>
+              </execution>
+              <!-- Generar informe HTML tras los tests -->
+              <execution>
+                <id>jmeter-check-results</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>results</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <testFilesDirectory>${project.basedir}/src/test/jmeter</testFilesDirectory>
+              <resultsDirectory>${project.build.directory}/jmeter/results</resultsDirectory>
+              <generateReports>true</generateReports>
+              <reportDirectory>${project.build.directory}/jmeter/reports</reportDirectory>
+              <!-- Ignorar fallos de JMeter para no romper el build -->
+              <ignoreResultFailures>true</ignoreResultFailures>
+              <propertiesUser>
+                <server.host>localhost</server.host>
+                <server.port>8080</server.port>
+              </propertiesUser>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
 </project>

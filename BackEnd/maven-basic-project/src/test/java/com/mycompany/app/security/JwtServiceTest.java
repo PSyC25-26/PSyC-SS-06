@@ -73,9 +73,9 @@ public class JwtServiceTest {
     void testExpiredTokenIsInvalid() throws Exception {
         String expiredToken = generarTokenExpirado("test@correo.com");
 
-        boolean valido = jwtService.isTokenValid(expiredToken, userDetails);
-
-        assertFalse(valido);
+        assertThrows(io.jsonwebtoken.ExpiredJwtException.class, () -> {
+            jwtService.isTokenValid(expiredToken, userDetails);
+        });
     }
 
     private String generarTokenExpirado(String username) throws Exception {

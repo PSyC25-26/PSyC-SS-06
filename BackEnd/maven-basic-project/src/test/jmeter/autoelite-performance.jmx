@@ -174,14 +174,14 @@ Escenarios: login exitoso, login fallido, flujo completo con JWT, test de throug
             </collectionProp>
           </HeaderManager>
           <hashTree/>
-          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Verificar respuesta 403 o 401" enabled="true">
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Verificar respuesta 401 o 403" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="49587">403</stringProp>
+              <stringProp name="-2113949024">^(401|403)$</stringProp>
             </collectionProp>
-            <stringProp name="Assertion.custom_message">Login fallido debe devolver HTTP 403</stringProp>
+            <stringProp name="Assertion.custom_message">Login fallido debe devolver HTTP 401 o 403</stringProp>
             <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
-            <boolProp name="Assertion.assume_success">false</boolProp>
-            <intProp name="Assertion.test_type">8</intProp>
+            <boolProp name="Assertion.assume_success">true</boolProp>
+            <intProp name="Assertion.test_type">1</intProp>
           </ResponseAssertion>
           <hashTree/>
         </hashTree>

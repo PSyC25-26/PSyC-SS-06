@@ -128,8 +128,6 @@
               <resultsDirectory>${project.build.directory}/jmeter/results</resultsDirectory>
               <generateReports>true</generateReports>
               <reportDirectory>${project.build.directory}/jmeter/reports</reportDirectory>
-              <!-- Ignorar fallos de JMeter para no romper el build -->
-              <ignoreResultFailures>true</ignoreResultFailures>
               <propertiesUser>
                 <server.host>localhost</server.host>
                 <server.port>8080</server.port>

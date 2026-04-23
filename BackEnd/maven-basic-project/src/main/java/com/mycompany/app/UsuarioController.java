@@ -110,7 +110,12 @@ public class UsuarioController {
 
         usuario.setNombre(datosActualizados.getNombre());
         usuario.setEmail(datosActualizados.getEmail());
-        usuario.setPassword(datosActualizados.getPassword());
+
+        // Solo actualizar la password si llega una nueva en el body, y siempre cifrada con BCrypt
+        if (datosActualizados.getPassword() != null && !datosActualizados.getPassword().isEmpty()) {
+            usuario.setPassword(passwordEncoder.encode(datosActualizados.getPassword()));
+        }
+
         usuario.setEsAdmin(datosActualizados.isEsAdmin());
 
         Usuario usuarioGuardado = usuarioRepository.save(usuario);

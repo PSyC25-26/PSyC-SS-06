@@ -168,6 +168,64 @@ class AuthFlowIntegrationTest {
                 });
     }
 
+    @Test
+    void actualizarUsuarioCifraLaNuevaPasswordYPermiteLogin() throws Exception {
+        // 1. Registrar un usuario nuevo
+        String email = "actualizable." + System.currentTimeMillis() + "@test.com";
+        Usuario usuario = new Usuario();
+        usuario.setNombre("Actualizable");
+        usuario.setApellidos("Test");
+        usuario.setEmail(email);
+        usuario.setPassword("password-original");
+        usuario.setTelefono("600222333");
+        usuario.setEsAdmin(false);
+
+        MvcResult registroResult = mockMvc.perform(post("/api/usuarios/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(usuario)))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        Long idCreado = objectMapper.readTree(registroResult.getResponse().getContentAsString())
+                .get("id").asLong();
+
+        // 2. Actualizar el usuario con una password nueva (necesita token admin)
+        String tokenAdmin = obtenerTokenAdmin();
+
+        Usuario datosActualizados = new Usuario();
+        datosActualizados.setNombre("Actualizable Modificado");
+        datosActualizados.setEmail(email);
+        datosActualizados.setPassword("password-nueva-1234");
+        datosActualizados.setEsAdmin(false);
+
+        mockMvc.perform(put("/api/usuarios/update/" + idCreado)
+                        .header("Authorization", "Bearer " + tokenAdmin)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(datosActualizados)))
+                .andExpect(status().isOk());
+
+        Map<String, String> loginNueva = Map.of(
+                "email", email,
+                "password", "password-nueva-1234"
+        );
+
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginNueva)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").exists());
+
+        Map<String, String> loginVieja = Map.of(
+                "email", email,
+                "password", "password-original"
+        );
+
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginVieja)))
+                .andExpect(status().isUnauthorized());
+    }
+
     // Helpers
 
     private String obtenerTokenAdmin() throws Exception {

@@ -36,11 +36,7 @@ public class UsuarioController {
     @GetMapping
     public ResponseEntity<List<Usuario>> obtenerTodosLosUsuarios() {
         List<Usuario> usuarios = usuarioRepository.findAll();
-        if (!usuarios.isEmpty()) {
-            return new ResponseEntity<>(usuarios, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+        return new ResponseEntity<>(usuarios, HttpStatus.OK);
     }
 
     // Obtener usuario por ID
@@ -58,11 +54,7 @@ public class UsuarioController {
     @GetMapping("/admin/{esAdmin}")
     public ResponseEntity<List<Usuario>> obtenerUsuariosPorAdmin(@PathVariable boolean esAdmin) {
         List<Usuario> usuarios = usuarioRepository.findByEsAdmin(esAdmin);
-        if (!usuarios.isEmpty()) {
-            return new ResponseEntity<>(usuarios, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+        return new ResponseEntity<>(usuarios, HttpStatus.OK);
     }
 
 

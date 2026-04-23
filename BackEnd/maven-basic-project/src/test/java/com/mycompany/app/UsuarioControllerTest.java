@@ -151,7 +151,9 @@ public class UsuarioControllerTest {
         usuarioRepository.deleteAll(); // Vaciamos adrede
 
         mockMvc.perform(get("/api/usuarios"))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$").isEmpty());
     }
 
     @Test

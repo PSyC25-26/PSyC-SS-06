@@ -56,8 +56,9 @@ public class MarcaControllerTest {
 
         ResponseEntity<List<Marca>> respuesta = marcaController.obtenerTodasLasMarcas();
 
-        assertEquals(HttpStatus.NO_CONTENT, respuesta.getStatusCode());
-        assertNull(respuesta.getBody());
+        assertEquals(HttpStatus.OK, respuesta.getStatusCode());
+        assertNotNull(respuesta.getBody());
+        assertTrue(respuesta.getBody().isEmpty());
         verify(marcaRepository, times(1)).findAll();
     }
 
@@ -103,8 +104,9 @@ public class MarcaControllerTest {
 
         ResponseEntity<List<Marca>> respuesta = marcaController.obtenerMarcasPorPais("Italia");
 
-        assertEquals(HttpStatus.NO_CONTENT, respuesta.getStatusCode());
-        assertNull(respuesta.getBody());
+        assertEquals(HttpStatus.OK, respuesta.getStatusCode());
+        assertNotNull(respuesta.getBody());
+        assertTrue(respuesta.getBody().isEmpty());
         verify(marcaRepository, times(1)).findByCountry("Italia");
     }
 }

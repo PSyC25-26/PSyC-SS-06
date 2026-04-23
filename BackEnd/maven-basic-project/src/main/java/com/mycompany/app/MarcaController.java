@@ -22,11 +22,7 @@ public class MarcaController {
     @GetMapping
     public ResponseEntity<List<Marca>> obtenerTodasLasMarcas() {
         List<Marca> marcas = marcaRepository.findAll();
-        if (!marcas.isEmpty()) {
-            return new ResponseEntity<>(marcas, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+        return new ResponseEntity<>(marcas, HttpStatus.OK);
     }
 
     // Obtener marca por ID
@@ -45,10 +41,6 @@ public class MarcaController {
     public ResponseEntity<List<Marca>> obtenerMarcasPorPais(@PathVariable String country) {
         // Requiere: List<Marca> findByCountry(String country); en MarcaRepository
         List<Marca> marcas = marcaRepository.findByCountry(country);
-        if (!marcas.isEmpty()) {
-            return new ResponseEntity<>(marcas, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+        return new ResponseEntity<>(marcas, HttpStatus.OK);
     }
 }

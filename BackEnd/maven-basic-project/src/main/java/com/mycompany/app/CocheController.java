@@ -30,11 +30,7 @@ public class CocheController {
     @GetMapping
     public ResponseEntity<List<Coche>> obtenerTodosLosCoches() {
         List<Coche> coches = cocheRepository.findAll();
-        if (!coches.isEmpty()) {
-            return new ResponseEntity<>(coches, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+        return new ResponseEntity<>(coches, HttpStatus.OK);
     }
 
     // Obtener coche por ID
@@ -52,11 +48,7 @@ public class CocheController {
     @GetMapping("/marca/{marca}")
     public ResponseEntity<List<Coche>> obtenerCochesMarca(@PathVariable String marca) {
         List<Coche> coches = cocheRepository.findByMarca(marca);
-        if (!coches.isEmpty()) {
-            return new ResponseEntity<>(coches, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+        return new ResponseEntity<>(coches, HttpStatus.OK);
     }
 
     // POST - Crear coche

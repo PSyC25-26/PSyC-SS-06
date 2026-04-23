@@ -1,5 +1,7 @@
 package com.mycompany.app;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class DataInitializer implements CommandLineRunner {
+
+    private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
 
     private final CocheRepository cocheRepository;
     private final UsuarioRepository usuarioRepository;
@@ -33,11 +37,13 @@ public class DataInitializer implements CommandLineRunner {
         if (marcaRepository.count() == 0) {
             marcaRepository.save(new Marca("Toyota", "Japón"));
             marcaRepository.save(new Marca("Ford", "EEUU"));
+            log.info("Marcas iniciales sembradas");
         }
 
         if (cocheRepository.count() == 0) {
             cocheRepository.save(new Coche("Toyota", "Corolla", 25000.0, 2023, 5));
             cocheRepository.save(new Coche("Ford", "Mustang", 45000.0, 2024, 2));
+            log.info("Coches iniciales sembrados");
         }
 
         // Crear admin solo si no existe; la password se cifra con BCrypt para que el login funcione
@@ -50,8 +56,9 @@ public class DataInitializer implements CommandLineRunner {
             admin.setTelefono("600000000");
             admin.setEsAdmin(true);
             usuarioRepository.save(admin);
+            log.info("Usuario admin creado");
         }
 
-        System.out.println("--- DATOS CARGADOS CORRECTAMENTE ---");
+        log.info("Datos iniciales cargados correctamente");
     }
 }

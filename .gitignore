@@ -29,4 +29,6 @@ Thumbs.db
 # Claude
 .claude/
 
+# H2 database
 autoelite_db.mv.db
+autoelite_db.trace.db

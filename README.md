@@ -115,13 +115,44 @@ Actualmente hay **70 tests** que cubren:
 
 ### Cobertura de codigo (JaCoCo)
 
-Despues de `mvn test` se genera automaticamente el reporte HTML en:
+JaCoCo mide qué porcentaje del código fuente se ejecuta durante los
+tests. El plugin esta integrado en el `pom.xml` y se ejecuta
+automaticamente al lanzar `mvn test`.
 
-```
-BackEnd/maven-basic-project/target/site/jacoco/index.html
+#### Generar y ver el reporte
+
+```bash
+cd BackEnd/maven-basic-project
+mvn test
+open target/site/jacoco/index.html   # macOS
+# xdg-open target/site/jacoco/index.html   # Linux
+# start target/site/jacoco/index.html      # Windows
 ```
 
-Cobertura actual: **95% lineas, 77% ramas**.
+#### Cobertura actual
+
+| Tipo                | Cubierto | Total |  %  |
+|---------------------|----------|-------|-----|
+| Instrucciones       | 1.180    | 1.237 | 95% |
+| Ramas (branches)    | 48       | 62    | 77% |
+| Lineas              | 295      | 307   | 96% |
+| Metodos             | 92       | 98    | 93% |
+| Clases              | 15       | 15    | 100% |
+
+#### Como interpretar el reporte
+
+- **Verde**: linea cubierta por algun test
+- **Amarillo**: linea parcialmente cubierta (algunas ramas si, otras no)
+- **Rojo**: linea sin cubrir
+
+El reporte permite navegar paquete → clase → metodo, viendo el codigo
+fuente coloreado y sabiendo exactamente que falta por testear.
+
+#### Notas
+
+- El reporte se regenera cada vez que se ejecuta `mvn test`.
+- No hay umbral minimo configurado (no rompe el build), solo informa.
+- Los archivos de reporte estan en `target/`, que esta ignorado por git.
 
 ### Pruebas de rendimiento (JMeter)
 

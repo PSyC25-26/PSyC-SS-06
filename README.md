@@ -96,3 +96,52 @@ La aplicacion arranca en [http://localhost:3000](http://localhost:3000).
 2. Arrancar el frontend: `cd FrontEnd && npm run dev`
 3. Abrir [http://localhost:3000](http://localhost:3000)
 4. Para acceder al panel admin, iniciar sesion con `admin@autoelite.com` / `1234`
+
+## Tests y calidad
+
+### Tests automatizados
+
+Ejecutar toda la suite de tests (unitarios + integracion):
+
+```bash
+cd BackEnd/maven-basic-project
+mvn test
+```
+
+Actualmente hay **70 tests** que cubren:
+
+- **Unitarios**: controladores, servicios, repositorios, filtros JWT
+- **Integracion**: flujo end-to-end de autenticacion con `@SpringBootTest` + `MockMvc`
+
+### Cobertura de codigo (JaCoCo)
+
+Despues de `mvn test` se genera automaticamente el reporte HTML en:
+
+```
+BackEnd/maven-basic-project/target/site/jacoco/index.html
+```
+
+Cobertura actual: **95% lineas, 77% ramas**.
+
+### Pruebas de rendimiento (JMeter)
+
+Requiere tener el backend arrancado en `localhost:8080`. En otra terminal:
+
+```bash
+cd BackEnd/maven-basic-project
+mvn -Pjmeter verify
+```
+
+Resultados:
+- CSV crudo: `target/jmeter/results/`
+- Reporte HTML: `target/jmeter/reports/autoelite-performance/index.html`
+
+El plan ejecuta 4 escenarios:
+- TG1: carga de logins exitosos
+- TG2: carga de logins con credenciales incorrectas
+- TG3: flujo completo login + GET coches con JWT
+- TG4: throughput de GET coches durante 30 segundos
+
+### Profiling con VisualVM
+
+El proyecto incluye un snapshot de profiling en `profiling/visualvm-snapshot.jfr` y un script de generacion de carga en `profiling/generar-carga.ps1` (Windows).

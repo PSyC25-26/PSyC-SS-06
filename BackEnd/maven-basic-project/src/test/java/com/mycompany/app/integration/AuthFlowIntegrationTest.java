@@ -95,8 +95,8 @@ class AuthFlowIntegrationTest {
 
     @Test
     void rutaAdminSinTokenDevuelveNoAutorizado() throws Exception {
-        // /api/usuarios/admin/{esAdmin} requiere rol ADMIN
-        mockMvc.perform(get("/api/usuarios/admin/true"))
+        // /api/usuarios/{id} requiere rol ADMIN para ver un usuario concreto
+        mockMvc.perform(get("/api/usuarios/1"))
                 .andExpect(result -> {
                     int status = result.getResponse().getStatus();
                     // Sin token Spring Security devuelve 401 o 403 según la configuración
@@ -107,8 +107,9 @@ class AuthFlowIntegrationTest {
     @Test
     void rutaAdminConTokenAdminDevuelveOk() throws Exception {
         String token = obtenerTokenAdmin();
+        Long idAdmin = usuarioRepository.findByEmail(ADMIN_EMAIL).orElseThrow().getId();
 
-        mockMvc.perform(get("/api/usuarios/admin/true")
+        mockMvc.perform(get("/api/usuarios/" + idAdmin)
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());
     }
@@ -160,7 +161,7 @@ class AuthFlowIntegrationTest {
         String tokenUsuarioBasico = extraerToken(loginResult);
 
         // 3. Intentar acceder a una ruta de admin con su token: debe denegarse
-        mockMvc.perform(get("/api/usuarios/admin/true")
+        mockMvc.perform(get("/api/usuarios/1")
                         .header("Authorization", "Bearer " + tokenUsuarioBasico))
                 .andExpect(result -> {
                     int status = result.getResponse().getStatus();

@@ -14,6 +14,7 @@ import com.mycompany.app.security.JwtService;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import java.util.List;
@@ -32,10 +33,15 @@ public class UsuarioController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // Obtener todos los usuarios
+    // Obtener usuarios; opcionalmente filtrados por rol con ?esAdmin=true|false
     @GetMapping
-    public ResponseEntity<List<Usuario>> obtenerTodosLosUsuarios() {
-        List<Usuario> usuarios = usuarioRepository.findAll();
+    public ResponseEntity<List<Usuario>> obtenerUsuarios(
+            @RequestParam(required = false) Boolean esAdmin) {
+
+        List<Usuario> usuarios = (esAdmin != null)
+                ? usuarioRepository.findByEsAdmin(esAdmin)
+                : usuarioRepository.findAll();
+
         return new ResponseEntity<>(usuarios, HttpStatus.OK);
     }
 
@@ -48,13 +54,6 @@ public class UsuarioController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-    }
-
-    // Obtener usuarios por rol
-    @GetMapping("/admin/{esAdmin}")
-    public ResponseEntity<List<Usuario>> obtenerUsuariosPorAdmin(@PathVariable boolean esAdmin) {
-        List<Usuario> usuarios = usuarioRepository.findByEsAdmin(esAdmin);
-        return new ResponseEntity<>(usuarios, HttpStatus.OK);
     }
 
 

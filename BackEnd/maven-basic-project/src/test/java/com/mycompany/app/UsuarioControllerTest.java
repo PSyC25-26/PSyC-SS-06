@@ -80,7 +80,7 @@ public class UsuarioControllerTest {
     void testObtenerUsuariosPorAdmin() throws Exception {
         log.info("Ejecutando test: obtenerUsuariosPorAdmin...");
         // aaron@gmail.com no es admin (false)
-        mockMvc.perform(get("/api/usuarios/admin/false"))
+        mockMvc.perform(get("/api/usuarios").param("esAdmin", "false"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].nombre").value("Aaron Aaronson"));
     }

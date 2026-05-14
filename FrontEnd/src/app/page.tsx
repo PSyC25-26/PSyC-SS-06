@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 interface Coche {
   id: number;
@@ -22,9 +24,6 @@ export default function Home() {
   const [coches, setCoches] = useState<Coche[]>([]);
   const [marcas, setMarcas] = useState<Marca[]>([]);
   const [filtroMarca, setFiltroMarca] = useState("");
-  const [loggedIn, setLoggedIn] = useState(
-    () => typeof window !== "undefined" && !!localStorage.getItem("token")
-  );
 
   useEffect(() => {
     fetch("http://localhost:8080/api/coches")
@@ -38,11 +37,6 @@ export default function Home() {
       .catch(() => setMarcas([]));
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    setLoggedIn(false);
-  };
-
   const cochesFiltrados = filtroMarca
     ? coches.filter((c) => c.marca.toLowerCase() === filtroMarca.toLowerCase())
     : coches;
@@ -54,215 +48,345 @@ export default function Home() {
       minimumFractionDigits: 0,
     }).format(precio);
 
+  const stockTotal = coches.reduce((acc, c) => acc + c.stock, 0);
+  const featured = cochesFiltrados[0];
+  const rest = cochesFiltrados.slice(1);
+
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
-      <nav className="border-b border-slate-800 bg-slate-950/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="text-xl font-bold tracking-tight">
-            Auto<span className="text-blue-500">Elite</span>
-          </Link>
+    <div className="paper-grain min-h-screen bg-bone text-ink">
+      <Navbar />
 
-          <div className="hidden md:flex items-center gap-8 text-sm text-slate-400">
-            <a href="#catalogo" className="hover:text-white transition-colors">
-              Catálogo
-            </a>
-            <a href="#marcas" className="hover:text-white transition-colors">
-              Marcas
-            </a>
+      {/* HERO EDITORIAL */}
+      <section className="max-w-[1380px] mx-auto px-6 lg:px-10 pt-12 lg:pt-20 pb-24 lg:pb-32">
+        <div className="grid grid-cols-12 gap-x-6 gap-y-10">
+          {/* Cabecera estilo portada de revista */}
+          <div className="col-span-12 flex items-start justify-between border-b border-line pb-5 wash">
+            <div className="kicker">
+              Vol. III <span className="dot mx-2 align-middle" /> Primavera 2026
+            </div>
+            <div className="kicker hidden sm:block">
+              {coches.length.toString().padStart(2, "0")} vehículos en catálogo
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            {loggedIn && (
-              <Link
-                href="/admin"
-                className="px-4 py-2 text-sm text-slate-400 hover:text-white border border-slate-700 rounded-lg transition-colors"
-              >
-                Admin
-              </Link>
-            )}
-            {loggedIn ? (
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 text-sm text-slate-400 hover:text-white border border-slate-700 rounded-lg transition-colors cursor-pointer"
-              >
-                Cerrar sesión
-              </button>
-            ) : (
-              <Link
-                href="/login"
-                className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
-              >
-                Iniciar sesión
-              </Link>
-            )}
-          </div>
-        </div>
-      </nav>
-
-      <section className="max-w-7xl mx-auto px-6 py-20">
-        <div className="max-w-2xl">
-          <h1 className="text-5xl font-bold tracking-tight leading-tight">
-            Encuentra el coche
-            <br />
-            <span className="text-blue-500">perfecto para ti.</span>
-          </h1>
-          <p className="text-slate-400 text-lg mt-4 leading-relaxed">
-            Explora nuestro catálogo de vehículos nuevos y de ocasión. Las
-            mejores marcas con las mejores condiciones.
-          </p>
-          <div className="flex gap-4 mt-8">
-            <a
-              href="#catalogo"
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors text-sm"
+          {/* Headline */}
+          <div className="col-span-12 lg:col-span-8 mt-6">
+            <h1
+              className="display text-[clamp(3rem,9vw,8.5rem)] rise"
+              style={{ animationDelay: "60ms" }}
             >
-              Ver catálogo
-            </a>
-            {!loggedIn && (
-              <Link
-                href="/login"
-                className="px-6 py-3 border border-slate-700 hover:border-slate-500 rounded-lg font-medium transition-colors text-sm"
-              >
+              Una colección
+              <br />
+              <em>curada</em> de
+              <br />
+              automóviles.
+            </h1>
+          </div>
+
+          {/* Columna lateral derecha tipo entradilla */}
+          <div
+            className="col-span-12 lg:col-span-4 lg:pt-4 rise"
+            style={{ animationDelay: "260ms" }}
+          >
+            <p className="text-ink-soft leading-relaxed max-w-md text-[1.02rem]">
+              Vehículos nuevos y de ocasión seleccionados uno a uno por nuestro
+              equipo. Sin filtros engañosos, sin letra pequeña; cada ficha es
+              honesta porque cada coche pasa por nuestras manos antes de pasar
+              por las tuyas.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-4">
+              <a href="#catalogo" className="btn-ink">
+                Ver catálogo
+                <span aria-hidden>→</span>
+              </a>
+              <Link href="/login" className="btn-ghost">
                 Crear cuenta
               </Link>
-            )}
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-8 mt-16 max-w-lg">
+        {/* Strip de cifras editorial */}
+        <div
+          className="mt-20 lg:mt-28 grid grid-cols-3 gap-6 border-y border-line py-8 rise"
+          style={{ animationDelay: "420ms" }}
+        >
           <div>
-            <p className="text-3xl font-bold">{coches.length}</p>
-            <p className="text-slate-500 text-sm mt-1">Vehículos</p>
-          </div>
-          <div>
-            <p className="text-3xl font-bold">{marcas.length}</p>
-            <p className="text-slate-500 text-sm mt-1">Marcas</p>
-          </div>
-          <div>
-            <p className="text-3xl font-bold">
-              {coches.reduce((acc, c) => acc + c.stock, 0)}
+            <p className="kicker">Vehículos</p>
+            <p className="numeral text-5xl mt-2">
+              {coches.length.toString().padStart(2, "0")}
             </p>
-            <p className="text-slate-500 text-sm mt-1">En stock</p>
+          </div>
+          <div className="border-l border-line-soft pl-6">
+            <p className="kicker">Marcas</p>
+            <p className="numeral text-5xl mt-2">
+              {marcas.length.toString().padStart(2, "0")}
+            </p>
+          </div>
+          <div className="border-l border-line-soft pl-6">
+            <p className="kicker">En stock</p>
+            <p className="numeral text-5xl mt-2">
+              {stockTotal.toString().padStart(2, "0")}
+            </p>
           </div>
         </div>
       </section>
 
+      {/* ÍNDICE DE MARCAS — tipo table of contents */}
       {marcas.length > 0 && (
-        <section id="marcas" className="max-w-7xl mx-auto px-6 py-12">
-          <h2 className="text-2xl font-semibold mb-6">Marcas disponibles</h2>
-          <div className="flex flex-wrap gap-3">
-            <button
-              onClick={() => setFiltroMarca("")}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
-                filtroMarca === ""
-                  ? "bg-blue-600 text-white"
-                  : "bg-slate-800 text-slate-400 hover:text-white"
-              }`}
-            >
-              Todas
-            </button>
-            {marcas.map((marca) => (
+        <section
+          id="marcas"
+          className="max-w-[1380px] mx-auto px-6 lg:px-10 pb-16"
+        >
+          <div className="flex items-end justify-between mb-8 gap-6">
+            <div>
+              <p className="kicker mb-3">§ 01 — Marcas representadas</p>
+              <h2
+                className="display text-4xl md:text-5xl"
+                style={{ fontVariationSettings: '"opsz" 144, "SOFT" 30' }}
+              >
+                Casas y carrocerías.
+              </h2>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto no-scrollbar -mx-6 lg:-mx-10 px-6 lg:px-10">
+            <div className="flex gap-8 min-w-min">
               <button
-                key={marca.id}
-                onClick={() =>
-                  setFiltroMarca(
-                    filtroMarca === marca.name ? "" : marca.name
-                  )
-                }
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
-                  filtroMarca === marca.name
-                    ? "bg-blue-600 text-white"
-                    : "bg-slate-800 text-slate-400 hover:text-white"
+                onClick={() => setFiltroMarca("")}
+                className={`shrink-0 group text-left ${
+                  filtroMarca === "" ? "is-active" : ""
                 }`}
               >
-                {marca.name}
-                <span className="text-slate-500 ml-1.5 text-xs">
-                  {marca.country}
+                <span
+                  className={`ed-underline text-2xl md:text-3xl ${
+                    filtroMarca === "" ? "is-active text-ink" : "text-ink-muted"
+                  }`}
+                  style={{
+                    fontFamily: "var(--font-fraunces)",
+                    fontVariationSettings: '"opsz" 100, "SOFT" 50',
+                    fontStyle: filtroMarca === "" ? "italic" : "normal",
+                  }}
+                >
+                  Todas
                 </span>
+                <p className="kicker mt-2">
+                  {coches.length.toString().padStart(2, "0")}
+                </p>
               </button>
-            ))}
+
+              {marcas.map((marca) => {
+                const count = coches.filter(
+                  (c) => c.marca.toLowerCase() === marca.name.toLowerCase()
+                ).length;
+                const active = filtroMarca === marca.name;
+                return (
+                  <button
+                    key={marca.id}
+                    onClick={() =>
+                      setFiltroMarca(active ? "" : marca.name)
+                    }
+                    className="shrink-0 text-left"
+                  >
+                    <span
+                      className={`ed-underline text-2xl md:text-3xl block ${
+                        active ? "is-active text-ink" : "text-ink-muted"
+                      }`}
+                      style={{
+                        fontFamily: "var(--font-fraunces)",
+                        fontVariationSettings: '"opsz" 100, "SOFT" 50',
+                        fontStyle: active ? "italic" : "normal",
+                      }}
+                    >
+                      {marca.name}
+                    </span>
+                    <p className="kicker mt-2">
+                      {marca.country}{" "}
+                      <span className="dot mx-2 align-middle" />{" "}
+                      {count.toString().padStart(2, "0")}
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </section>
       )}
 
-      <section id="catalogo" className="max-w-7xl mx-auto px-6 py-12">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-semibold">
-            Catálogo
-            {filtroMarca && (
-              <span className="text-blue-500 ml-2">· {filtroMarca}</span>
-            )}
-          </h2>
-          <p className="text-slate-500 text-sm">
-            {cochesFiltrados.length} vehículo
-            {cochesFiltrados.length !== 1 ? "s" : ""}
+      {/* CATÁLOGO */}
+      <section
+        id="catalogo"
+        className="max-w-[1380px] mx-auto px-6 lg:px-10 pb-20"
+      >
+        <div className="flex items-end justify-between mb-12 border-t border-line pt-8">
+          <div>
+            <p className="kicker mb-3">§ 02 — Catálogo</p>
+            <h2
+              className="display text-4xl md:text-5xl"
+              style={{ fontVariationSettings: '"opsz" 144, "SOFT" 30' }}
+            >
+              En el showroom
+              {filtroMarca && (
+                <em
+                  className="italic text-rust"
+                  style={{ fontVariationSettings: '"opsz" 144, "SOFT" 100' }}
+                >
+                  {" "}· {filtroMarca}
+                </em>
+              )}
+              .
+            </h2>
+          </div>
+          <p className="kicker shrink-0 hidden md:block">
+            {cochesFiltrados.length.toString().padStart(2, "0")}{" "}
+            {cochesFiltrados.length === 1 ? "pieza" : "piezas"}
           </p>
         </div>
 
         {cochesFiltrados.length === 0 ? (
-          <div className="text-center py-20 text-slate-500">
-            <p className="text-lg">No hay vehículos disponibles</p>
-            <p className="text-sm mt-1">
+          <div className="py-32 text-center">
+            <p
+              className="display text-3xl md:text-4xl text-ink-muted"
+              style={{ fontVariationSettings: '"opsz" 100, "SOFT" 50' }}
+            >
+              Sin vehículos por ahora.
+            </p>
+            <p className="kicker mt-4">
               {filtroMarca
                 ? "Prueba con otra marca"
-                : "El catálogo se actualizará pronto"}
+                : "El catálogo se renueva semanalmente"}
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {cochesFiltrados.map((coche) => (
+          <>
+            {/* Pieza destacada */}
+            {featured && (
               <Link
-                href={`/coches/${coche.id}`}
-                key={coche.id}
-                className="bg-slate-900 border border-slate-800 rounded-xl p-6 hover:border-slate-700 transition-colors block"
+                href={`/coches/${featured.id}`}
+                className="group block grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 mb-16 lg:mb-24"
               >
-                <div className="bg-slate-800 rounded-lg h-40 flex items-center justify-center mb-4 overflow-hidden">
-                  <img src="/car-placeholder.svg" alt="Imagen del vehículo" className="w-full h-full object-cover" />
-                </div>
-
-                <div className="flex items-start justify-between mb-2">
-                  <div>
-                    <p className="text-xs text-blue-500 font-medium uppercase tracking-wider">
-                      {coche.marca}
-                    </p>
-                    <h3 className="text-lg font-semibold mt-0.5">
-                      {coche.modelo}
-                    </h3>
+                <div className="lg:col-span-8 relative overflow-hidden bg-bone-deep aspect-[4/3] lg:aspect-[16/10]">
+                  <img
+                    src="/car-placeholder.svg"
+                    alt={`${featured.marca} ${featured.modelo}`}
+                    className="w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.04]"
+                  />
+                  <div className="absolute top-5 left-5 kicker bg-bone/90 px-3 py-1.5">
+                    Pieza destacada
                   </div>
-                  <span className="text-xs text-slate-500 bg-slate-800 px-2 py-1 rounded">
-                    {coche.anio}
-                  </span>
                 </div>
-
-                <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-800">
-                  <p className="text-xl font-bold">
-                    {formatPrecio(coche.precio)}
-                  </p>
-                  <span
-                    className={`text-xs px-2 py-1 rounded ${
-                      coche.stock > 0
-                        ? "bg-green-500/10 text-green-400"
-                        : "bg-red-500/10 text-red-400"
-                    }`}
-                  >
-                    {coche.stock > 0
-                      ? `${coche.stock} en stock`
-                      : "Sin stock"}
-                  </span>
+                <div className="lg:col-span-4 flex flex-col justify-between">
+                  <div>
+                    <p className="kicker mb-3">{featured.marca}</p>
+                    <h3
+                      className="display text-4xl md:text-5xl"
+                      style={{
+                        fontVariationSettings: '"opsz" 144, "SOFT" 40',
+                      }}
+                    >
+                      {featured.modelo}
+                    </h3>
+                    <p className="text-ink-soft mt-5 leading-relaxed">
+                      Ejemplar disponible para visita en showroom. Toda la
+                      documentación a tu disposición.
+                    </p>
+                  </div>
+                  <dl className="mt-10">
+                    <div className="spec-row">
+                      <dt>Año</dt>
+                      <dd>{featured.anio}</dd>
+                    </div>
+                    <div className="spec-row">
+                      <dt>Existencias</dt>
+                      <dd>{featured.stock}</dd>
+                    </div>
+                    <div className="spec-row" style={{ borderBottom: "none" }}>
+                      <dt>Precio</dt>
+                      <dd
+                        className="text-rust"
+                        style={{
+                          fontVariationSettings: '"opsz" 144, "SOFT" 30',
+                          fontSize: "1.6rem",
+                        }}
+                      >
+                        {formatPrecio(featured.precio)}
+                      </dd>
+                    </div>
+                  </dl>
                 </div>
               </Link>
-            ))}
-          </div>
+            )}
+
+            {/* Rejilla del resto */}
+            {rest.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+                {rest.map((coche, idx) => (
+                  <Link
+                    href={`/coches/${coche.id}`}
+                    key={coche.id}
+                    className="group block"
+                  >
+                    <div className="relative overflow-hidden bg-bone-deep aspect-[4/3] mb-5">
+                      <img
+                        src="/car-placeholder.svg"
+                        alt={`${coche.marca} ${coche.modelo}`}
+                        className="w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.05]"
+                      />
+                      <span
+                        className={`absolute top-4 right-4 kicker px-2.5 py-1 ${
+                          coche.stock > 0
+                            ? "bg-ink text-bone"
+                            : "bg-bone/90 text-ink-muted"
+                        }`}
+                      >
+                        {coche.stock > 0 ? "Disponible" : "Reservado"}
+                      </span>
+                      <span className="absolute bottom-4 left-4 kicker bg-bone/90 px-2.5 py-1">
+                        N.º {(idx + 2).toString().padStart(2, "0")}
+                      </span>
+                    </div>
+                    <div className="flex items-baseline justify-between gap-4">
+                      <div className="min-w-0">
+                        <p className="kicker mb-1">{coche.marca}</p>
+                        <h3
+                          className="display text-2xl md:text-[1.75rem] truncate"
+                          style={{
+                            fontVariationSettings: '"opsz" 100, "SOFT" 30',
+                          }}
+                        >
+                          {coche.modelo}
+                        </h3>
+                      </div>
+                      <span
+                        className="font-mono text-xs text-ink-muted shrink-0"
+                        style={{ fontFamily: "var(--font-geist-mono)" }}
+                      >
+                        {coche.anio}
+                      </span>
+                    </div>
+                    <div className="flex items-end justify-between mt-3 pt-3 border-t border-line-soft">
+                      <span
+                        className="text-lg"
+                        style={{
+                          fontFamily: "var(--font-fraunces)",
+                          fontVariationSettings: '"opsz" 100, "SOFT" 20',
+                        }}
+                      >
+                        {formatPrecio(coche.precio)}
+                      </span>
+                      <span className="kicker text-ink-soft group-hover:text-rust transition-colors">
+                        Ver ficha →
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </>
         )}
       </section>
 
-      <footer className="border-t border-slate-800 mt-20">
-        <div className="max-w-7xl mx-auto px-6 py-8 flex items-center justify-between">
-          <p className="text-slate-600 text-sm">
-            © 2026 AutoElite. Todos los derechos reservados.
-          </p>
-          <p className="text-slate-700 text-xs">Concesionario de coches</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 interface Coche {
   id: number;
@@ -44,103 +46,166 @@ export default function CocheDetalle() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
-        <p className="text-slate-400">Cargando...</p>
+      <div className="paper-grain min-h-screen bg-bone text-ink">
+        <Navbar />
+        <div className="max-w-[1380px] mx-auto px-6 lg:px-10 py-32 flex items-center justify-center">
+          <p className="kicker">Cargando ficha…</p>
+        </div>
       </div>
     );
   }
 
   if (error || !coche) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center gap-4">
-        <p className="text-slate-400 text-lg">Vehículo no encontrado</p>
-        <Link
-          href="/"
-          className="text-blue-500 hover:text-blue-400 text-sm"
-        >
-          Volver al catálogo
-        </Link>
+      <div className="paper-grain min-h-screen bg-bone text-ink">
+        <Navbar />
+        <div className="max-w-[1380px] mx-auto px-6 lg:px-10 py-32 text-center">
+          <p
+            className="display text-5xl md:text-6xl"
+            style={{ fontVariationSettings: '"opsz" 144, "SOFT" 50' }}
+          >
+            Ficha no encontrada.
+          </p>
+          <p className="text-ink-soft mt-4">
+            El vehículo que buscas ya no está en catálogo.
+          </p>
+          <Link href="/" className="btn-ghost mt-10">
+            ← Volver a la colección
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
-      <nav className="border-b border-slate-800 bg-slate-950/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="text-xl font-bold tracking-tight">
-            Auto<span className="text-blue-500">Elite</span>
-          </Link>
-          <Link
-            href="/"
-            className="text-sm text-slate-400 hover:text-white transition-colors"
-          >
-            ← Volver al catálogo
-          </Link>
-        </div>
-      </nav>
+    <div className="paper-grain min-h-screen bg-bone text-ink">
+      <Navbar />
 
-      <div className="max-w-4xl mx-auto px-6 py-12">
-        <div className="flex items-center gap-2 text-sm text-slate-500 mb-8">
-          <Link href="/" className="hover:text-white transition-colors">
-            Inicio
-          </Link>
-          <span>/</span>
-          <span className="text-slate-300">
-            {coche.marca} {coche.modelo}
-          </span>
+      <article className="max-w-[1380px] mx-auto px-6 lg:px-10 py-12 lg:py-16">
+        {/* Migas / referencia editorial */}
+        <div className="flex items-center justify-between border-b border-line pb-4 mb-10">
+          <p className="kicker">
+            <Link href="/" className="hover:text-ink ed-underline">
+              Colección
+            </Link>
+            <span className="dot mx-3 align-middle" />
+            {coche.marca}
+            <span className="dot mx-3 align-middle" />
+            <span className="text-ink">{coche.modelo}</span>
+          </p>
+          <p className="kicker hidden md:block">
+            Ficha N.º {coche.id.toString().padStart(3, "0")}
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          <div className="bg-slate-900 border border-slate-800 rounded-xl h-80 flex items-center justify-center overflow-hidden">
-            <img src="/car-placeholder.svg" alt="Imagen del vehículo" className="w-full h-full object-cover" />
+        <div className="grid grid-cols-12 gap-x-6 gap-y-12">
+          {/* Imagen, ocupa lo grande */}
+          <div className="col-span-12 lg:col-span-8 relative bg-bone-deep aspect-[4/3] lg:aspect-[16/11] overflow-hidden">
+            <img
+              src="/car-placeholder.svg"
+              alt={`${coche.marca} ${coche.modelo}`}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute top-5 left-5 kicker bg-bone/90 px-3 py-1.5">
+              {coche.marca} · {coche.anio}
+            </div>
+            <div
+              className={`absolute top-5 right-5 kicker px-3 py-1.5 ${
+                coche.stock > 0
+                  ? "bg-ink text-bone"
+                  : "bg-bone/90 text-ink-muted"
+              }`}
+            >
+              {coche.stock > 0
+                ? `${coche.stock} en stock`
+                : "Reservado"}
+            </div>
           </div>
 
-          <div>
-            <p className="text-sm text-blue-500 font-medium uppercase tracking-wider">
-              {coche.marca}
-            </p>
-            <h1 className="text-3xl font-bold mt-1">{coche.modelo}</h1>
+          {/* Ficha lateral */}
+          <aside className="col-span-12 lg:col-span-4">
+            <p className="kicker mb-4">{coche.marca}</p>
+            <h1
+              className="display text-5xl md:text-6xl"
+              style={{ fontVariationSettings: '"opsz" 144, "SOFT" 40' }}
+            >
+              {coche.modelo}
+            </h1>
 
-            <div className="mt-6 space-y-4">
-              <div className="flex justify-between items-center py-3 border-b border-slate-800">
-                <span className="text-slate-400">Precio</span>
-                <span className="text-2xl font-bold">
-                  {formatPrecio(coche.precio)}
-                </span>
-              </div>
-              <div className="flex justify-between items-center py-3 border-b border-slate-800">
-                <span className="text-slate-400">Año</span>
-                <span className="font-medium">{coche.anio}</span>
-              </div>
-              <div className="flex justify-between items-center py-3 border-b border-slate-800">
-                <span className="text-slate-400">Marca</span>
-                <span className="font-medium">{coche.marca}</span>
-              </div>
-              <div className="flex justify-between items-center py-3 border-b border-slate-800">
-                <span className="text-slate-400">Disponibilidad</span>
-                <span
-                  className={`px-3 py-1 rounded text-sm font-medium ${
-                    coche.stock > 0
-                      ? "bg-green-500/10 text-green-400"
-                      : "bg-red-500/10 text-red-400"
-                  }`}
-                >
-                  {coche.stock > 0
-                    ? `${coche.stock} unidades disponibles`
-                    : "Sin stock"}
-                </span>
-              </div>
+            <div className="mt-8 mb-2">
+              <p className="kicker">Precio</p>
+              <p
+                className="text-rust mt-1"
+                style={{
+                  fontFamily: "var(--font-fraunces)",
+                  fontVariationSettings: '"opsz" 144, "SOFT" 30',
+                  fontSize: "clamp(2.4rem, 4vw, 3.4rem)",
+                  letterSpacing: "-0.02em",
+                  lineHeight: 1,
+                }}
+              >
+                {formatPrecio(coche.precio)}
+              </p>
             </div>
 
-            {coche.stock > 0 && (
-              <button className="w-full mt-8 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors cursor-pointer">
-                Solicitar información
+            <dl className="mt-10">
+              <div className="spec-row">
+                <dt>Marca</dt>
+                <dd>{coche.marca}</dd>
+              </div>
+              <div className="spec-row">
+                <dt>Modelo</dt>
+                <dd>{coche.modelo}</dd>
+              </div>
+              <div className="spec-row">
+                <dt>Año</dt>
+                <dd>{coche.anio}</dd>
+              </div>
+              <div className="spec-row" style={{ borderBottom: "none" }}>
+                <dt>Existencias</dt>
+                <dd>{coche.stock}</dd>
+              </div>
+            </dl>
+
+            {coche.stock > 0 ? (
+              <button className="btn-ink w-full mt-10">
+                Solicitar visita
+                <span aria-hidden>→</span>
+              </button>
+            ) : (
+              <button
+                disabled
+                className="btn-ghost w-full mt-10 opacity-50 cursor-not-allowed"
+              >
+                Sin stock
               </button>
             )}
-          </div>
+            <p className="kicker mt-4 text-center">
+              Respuesta en menos de 24h hábiles
+            </p>
+          </aside>
         </div>
-      </div>
+
+        {/* Cita editorial bajo la ficha */}
+        <div className="mt-24 grid grid-cols-12 gap-6 border-t border-line pt-10">
+          <p className="col-span-12 md:col-span-2 kicker">
+            Nota del editor
+          </p>
+          <p
+            className="col-span-12 md:col-span-8 text-2xl md:text-3xl leading-snug"
+            style={{
+              fontFamily: "var(--font-fraunces)",
+              fontVariationSettings: '"opsz" 100, "SOFT" 60',
+              fontStyle: "italic",
+            }}
+          >
+            “Un {coche.modelo} no se vende, se cede a alguien que lo entiende.
+            Reserva tu visita y déjanos contarte su historia.”
+          </p>
+        </div>
+      </article>
+
+      <Footer />
     </div>
   );
 }

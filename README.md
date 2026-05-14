@@ -41,7 +41,7 @@ Usa H2 (base de datos embebida en fichero). Se crea automaticamente al arrancar.
 Al arrancar se insertan automaticamente:
 - 2 marcas: Toyota, Ford
 - 2 coches: Toyota Corolla, Ford Mustang
-- 1 usuario admin: `admin@autoelite.com` / `1234`
+- 1 usuario admin: `admin@autoelite.com` / `123456`
 
 ### Endpoints principales
 
@@ -95,7 +95,7 @@ La aplicacion arranca en [http://localhost:3000](http://localhost:3000).
 1. Arrancar el backend: `cd BackEnd/maven-basic-project && mvn spring-boot:run`
 2. Arrancar el frontend: `cd FrontEnd && npm run dev`
 3. Abrir [http://localhost:3000](http://localhost:3000)
-4. Para acceder al panel admin, iniciar sesion con `admin@autoelite.com` / `1234`
+4. Para acceder al panel admin, iniciar sesion con `admin@autoelite.com` / `123456`
 
 ## Tests y calidad
 

@@ -22,11 +22,11 @@ export default function Home() {
   const [coches, setCoches] = useState<Coche[]>([]);
   const [marcas, setMarcas] = useState<Marca[]>([]);
   const [filtroMarca, setFiltroMarca] = useState("");
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(
+    () => typeof window !== "undefined" && !!localStorage.getItem("token")
+  );
 
   useEffect(() => {
-    setLoggedIn(!!localStorage.getItem("token"));
-
     fetch("http://localhost:8080/api/coches")
       .then((res) => (res.ok ? res.json() : []))
       .then(setCoches)

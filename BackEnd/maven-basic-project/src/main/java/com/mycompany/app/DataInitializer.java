@@ -52,7 +52,7 @@ public class DataInitializer implements CommandLineRunner {
             admin.setNombre("Admin");
             admin.setApellidos("Principal");
             admin.setEmail("admin@autoelite.com");
-            admin.setPassword(passwordEncoder.encode("1234"));
+            admin.setPassword(passwordEncoder.encode("123456"));
             admin.setTelefono("600000000");
             admin.setEsAdmin(true);
             usuarioRepository.save(admin);

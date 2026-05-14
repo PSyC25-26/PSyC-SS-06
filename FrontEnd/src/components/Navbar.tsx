@@ -1,24 +1,32 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 interface NavbarProps {
   variant?: "light" | "transparent";
 }
 
-export default function Navbar({ variant = "light" }: NavbarProps) {
-  const pathname = usePathname();
-  const [loggedIn, setLoggedIn] = useState(false);
+// Suscripción al evento "storage" para que cambios en localStorage
+// se reflejen en el componente sin necesidad de useEffect + setState.
+const subscribeToken = (cb: () => void) => {
+  window.addEventListener("storage", cb);
+  return () => window.removeEventListener("storage", cb);
+};
+const getTokenSnapshot = () => !!localStorage.getItem("token");
+const getServerSnapshot = () => false;
 
-  useEffect(() => {
-    setLoggedIn(!!localStorage.getItem("token"));
-  }, [pathname]);
+export default function Navbar({ variant = "light" }: NavbarProps) {
+  const loggedIn = useSyncExternalStore(
+    subscribeToken,
+    getTokenSnapshot,
+    getServerSnapshot
+  );
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    setLoggedIn(false);
+    // Forzar a oyentes del mismo tab a refrescar
+    window.dispatchEvent(new Event("storage"));
     window.location.href = "/";
   };
 

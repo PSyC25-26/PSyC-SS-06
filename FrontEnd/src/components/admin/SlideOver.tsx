@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 
@@ -12,6 +12,11 @@ interface SlideOverProps {
   children: React.ReactNode;
 }
 
+// Detectar si estamos en cliente sin recurrir a useEffect + setState
+const subscribeNoop = () => () => {};
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
+
 export default function SlideOver({
   open,
   onClose,
@@ -19,11 +24,11 @@ export default function SlideOver({
   kicker,
   children,
 }: SlideOverProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(
+    subscribeNoop,
+    getClientSnapshot,
+    getServerSnapshot
+  );
 
   useEffect(() => {
     if (!open) return;

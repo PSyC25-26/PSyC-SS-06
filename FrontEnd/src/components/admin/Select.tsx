@@ -86,14 +86,6 @@ export default function Select({
     return () => document.removeEventListener("keydown", onKey);
   }, [open, activeIndex, options, onChange]);
 
-  // Al abrir, posicionar el highlight sobre el seleccionado
-  useEffect(() => {
-    if (open) {
-      const idx = options.findIndex((o) => o.value === value);
-      setActiveIndex(idx >= 0 ? idx : 0);
-    }
-  }, [open, options, value]);
-
   // Scroll del item activo a la vista
   useEffect(() => {
     if (!open || activeIndex < 0 || !listRef.current) return;
@@ -102,6 +94,15 @@ export default function Select({
     );
     el?.scrollIntoView({ block: "nearest" });
   }, [open, activeIndex]);
+
+  const toggleOpen = () => {
+    if (!open) {
+      // Al abrir, posicionar el highlight sobre el seleccionado
+      const idx = options.findIndex((o) => o.value === value);
+      setActiveIndex(idx >= 0 ? idx : 0);
+    }
+    setOpen((v) => !v);
+  };
 
   return (
     <div ref={wrapRef} className={`relative ${className}`}>
@@ -117,7 +118,7 @@ export default function Select({
       <button
         type="button"
         id={id}
-        onClick={() => setOpen((v) => !v)}
+        onClick={toggleOpen}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={listboxId}

@@ -27,6 +27,51 @@ jobs:
       - name: Run Maven tests
         run: mvn --batch-mode test
 
+      - name: Resumen de cobertura JaCoCo
+        if: always()
+        run: |
+          if [ ! -f target/site/jacoco/jacoco.csv ]; then
+            echo "No se generó el reporte de JaCoCo" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          awk -F, 'NR>1 {
+            im+=$4; ic+=$5;
+            bm+=$6; bc+=$7;
+            lm+=$8; lc+=$9;
+            cm+=$10; cc+=$11;
+            mtm+=$12; mtc+=$13;
+            clases++;
+          }
+          END {
+            ti=im+ic; tb=bm+bc; tl=lm+lc; tc=cm+cc; tm=mtm+mtc;
+            pi = ti>0 ? ic*100/ti : 0;
+            pb = tb>0 ? bc*100/tb : 0;
+            pl = tl>0 ? lc*100/tl : 0;
+            pc = tc>0 ? cc*100/tc : 0;
+            pm = tm>0 ? mtc*100/tm : 0;
+            print "## Cobertura JaCoCo";
+            print "";
+            printf "Clases analizadas: **%d**\n\n", clases;
+            print "| Métrica | Cubierto | Total | % |";
+            print "|---|---:|---:|---:|";
+            printf "| Instrucciones | %d | %d | **%.1f%%** |\n", ic, ti, pi;
+            printf "| Ramas | %d | %d | **%.1f%%** |\n", bc, tb, pb;
+            printf "| Líneas | %d | %d | **%.1f%%** |\n", lc, tl, pl;
+            printf "| Complejidad | %d | %d | **%.1f%%** |\n", cc, tc, pc;
+            printf "| Métodos | %d | %d | **%.1f%%** |\n", mtc, tm, pm;
+            print "";
+            print "Reporte HTML completo disponible como artifact del run.";
+          }' target/site/jacoco/jacoco.csv >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Subir reporte JaCoCo como artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: BackEnd/maven-basic-project/target/site/jacoco/
+          retention-days: 14
+          if-no-files-found: warn
+
   frontend:
     name: Frontend checks
     runs-on: ubuntu-latest

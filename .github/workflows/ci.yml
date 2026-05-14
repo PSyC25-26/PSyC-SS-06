@@ -65,7 +65,7 @@ jobs:
 
       - name: Subir reporte JaCoCo como artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: jacoco-report
           path: BackEnd/maven-basic-project/target/site/jacoco/

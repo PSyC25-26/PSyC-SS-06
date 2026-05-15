@@ -8,6 +8,7 @@ interface Marca {
   id: number;
   name: string;
   country: string;
+  logoUrl?: string;
 }
 
 interface Coche {
@@ -18,11 +19,13 @@ interface Coche {
 interface MarcaForm {
   name: string;
   country: string;
+  logoUrl: string;
 }
 
 const FORM_VACIO: MarcaForm = {
   name: "",
   country: "",
+  logoUrl: "",
 };
 
 export default function AdminMarcasPage() {
@@ -89,7 +92,11 @@ export default function AdminMarcasPage() {
 
   const abrirEditar = (m: Marca) => {
     setEditando(m);
-    setForm({ name: m.name, country: m.country || "" });
+    setForm({
+      name: m.name,
+      country: m.country || "",
+      logoUrl: m.logoUrl || "",
+    });
     setErrorForm("");
     setDrawerAbierto(true);
   };
@@ -118,7 +125,11 @@ export default function AdminMarcasPage() {
       return;
     }
 
-    const payload = { name: form.name.trim(), country: form.country.trim() };
+    const payload = {
+      name: form.name.trim(),
+      country: form.country.trim(),
+      logoUrl: form.logoUrl.trim() || null,
+    };
 
     setGuardando(true);
     try {
@@ -367,6 +378,46 @@ export default function AdminMarcasPage() {
               placeholder="Japón, EEUU, Alemania…"
               className="field-dark"
             />
+          </div>
+
+          <div className="mt-5">
+            <div className="flex items-baseline justify-between mb-1">
+              <label className="kicker !text-bone/60">URL de logo</label>
+              {form.logoUrl && (
+                <button
+                  type="button"
+                  onClick={() => setForm({ ...form, logoUrl: "" })}
+                  className="kicker !text-bone/40 hover:!text-rust cursor-pointer"
+                >
+                  Quitar
+                </button>
+              )}
+            </div>
+            <input
+              type="text"
+              name="logoUrl"
+              value={form.logoUrl}
+              onChange={onChange}
+              placeholder="/seed/toyota-logo.svg o https://…"
+              className="field-dark"
+            />
+            <div className="mt-3 h-28 bg-bone/5 border border-bone/10 overflow-hidden flex items-center justify-center p-4">
+              {form.logoUrl ? (
+                <img
+                  src={form.logoUrl}
+                  alt="Vista previa del logo"
+                  className="max-h-full max-w-full object-contain"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                  onLoad={(e) => {
+                    e.currentTarget.style.display = "block";
+                  }}
+                />
+              ) : (
+                <span className="kicker !text-bone/30">Sin logo</span>
+              )}
+            </div>
           </div>
 
           {errorForm && (

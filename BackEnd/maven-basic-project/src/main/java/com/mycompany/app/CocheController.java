@@ -73,6 +73,7 @@ public class CocheController {
         cocheExistente.setPrecio(cocheActualizado.getPrecio());
         cocheExistente.setAnio(cocheActualizado.getAnio());
         cocheExistente.setStock(cocheActualizado.getStock());
+        cocheExistente.setImagenUrl(cocheActualizado.getImagenUrl());
 
         Coche cocheGuardado = cocheRepository.save(cocheExistente);
         return new ResponseEntity<>(cocheGuardado, HttpStatus.OK);

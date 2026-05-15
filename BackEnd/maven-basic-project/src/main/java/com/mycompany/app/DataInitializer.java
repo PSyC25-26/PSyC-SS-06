@@ -35,14 +35,26 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) {
         // Sembrar marcas y coches solo si están vacíos para evitar duplicados al reiniciar
         if (marcaRepository.count() == 0) {
-            marcaRepository.save(new Marca("Toyota", "Japón"));
-            marcaRepository.save(new Marca("Ford", "EEUU"));
+            Marca toyota = new Marca("Toyota", "Japón");
+            toyota.setLogoUrl("/seed/toyota-logo.svg");
+            marcaRepository.save(toyota);
+
+            Marca ford = new Marca("Ford", "EEUU");
+            ford.setLogoUrl("/seed/ford-logo.svg");
+            marcaRepository.save(ford);
+
             log.info("Marcas iniciales sembradas");
         }
 
         if (cocheRepository.count() == 0) {
-            cocheRepository.save(new Coche("Toyota", "Corolla", 25000.0, 2023, 5));
-            cocheRepository.save(new Coche("Ford", "Mustang", 45000.0, 2024, 2));
+            Coche corolla = new Coche("Toyota", "Corolla", 25000.0, 2023, 5);
+            corolla.setImagenUrl("/seed/toyota-corolla.jpg");
+            cocheRepository.save(corolla);
+
+            Coche mustang = new Coche("Ford", "Mustang", 45000.0, 2024, 2);
+            mustang.setImagenUrl("/seed/ford-mustang.jpg");
+            cocheRepository.save(mustang);
+
             log.info("Coches iniciales sembrados");
         }
 

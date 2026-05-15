@@ -12,6 +12,7 @@ interface Coche {
   precio: number;
   anio: number;
   stock: number;
+  imagenUrl?: string;
 }
 
 interface Marca {
@@ -26,6 +27,7 @@ interface CocheForm {
   precio: string;
   anio: string;
   stock: string;
+  imagenUrl: string;
 }
 
 const FORM_VACIO: CocheForm = {
@@ -34,6 +36,7 @@ const FORM_VACIO: CocheForm = {
   precio: "",
   anio: "",
   stock: "",
+  imagenUrl: "",
 };
 
 const fmtPrecio = (precio: number) =>
@@ -160,6 +163,7 @@ export default function AdminCochesPage() {
       precio: c.precio.toString(),
       anio: c.anio.toString(),
       stock: c.stock.toString(),
+      imagenUrl: c.imagenUrl || "",
     });
     setErrorForm("");
     setDrawerAbierto(true);
@@ -205,6 +209,7 @@ export default function AdminCochesPage() {
       precio,
       anio,
       stock,
+      imagenUrl: form.imagenUrl.trim() || null,
     };
 
     setGuardando(true);
@@ -540,6 +545,46 @@ export default function AdminCochesPage() {
                 placeholder="5"
                 className="field-dark"
               />
+            </div>
+          </div>
+
+          <div className="mt-5">
+            <div className="flex items-baseline justify-between mb-1">
+              <label className="kicker !text-bone/60">URL de imagen</label>
+              {form.imagenUrl && (
+                <button
+                  type="button"
+                  onClick={() => setForm({ ...form, imagenUrl: "" })}
+                  className="kicker !text-bone/40 hover:!text-rust cursor-pointer"
+                >
+                  Quitar
+                </button>
+              )}
+            </div>
+            <input
+              type="text"
+              name="imagenUrl"
+              value={form.imagenUrl}
+              onChange={onChange}
+              placeholder="/seed/toyota-corolla.jpg o https://…"
+              className="field-dark"
+            />
+            <div className="mt-3 h-36 bg-bone/5 border border-bone/10 overflow-hidden flex items-center justify-center">
+              {form.imagenUrl ? (
+                <img
+                  src={form.imagenUrl}
+                  alt="Vista previa"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                  onLoad={(e) => {
+                    e.currentTarget.style.display = "block";
+                  }}
+                />
+              ) : (
+                <span className="kicker !text-bone/30">Sin imagen</span>
+              )}
             </div>
           </div>
 

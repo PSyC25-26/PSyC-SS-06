@@ -12,12 +12,14 @@ interface Coche {
   precio: number;
   anio: number;
   stock: number;
+  imagenUrl?: string;
 }
 
 interface Marca {
   id: number;
   name: string;
   country: string;
+  logoUrl?: string;
 }
 
 export default function Home() {
@@ -188,10 +190,34 @@ export default function Home() {
                     }
                     className="shrink-0 text-left"
                   >
+                    {marca.logoUrl ? (
+                      <span
+                        className={`block h-12 md:h-14 flex items-center transition-opacity ${
+                          active
+                            ? "opacity-100"
+                            : "opacity-45 hover:opacity-80"
+                        }`}
+                      >
+                        <img
+                          src={marca.logoUrl}
+                          alt={marca.name}
+                          className="h-9 md:h-11 w-auto object-contain"
+                          onError={(e) => {
+                            const img = e.currentTarget;
+                            img.style.display = "none";
+                            const fallback =
+                              img.parentElement?.nextElementSibling;
+                            if (fallback instanceof HTMLElement) {
+                              fallback.style.display = "block";
+                            }
+                          }}
+                        />
+                      </span>
+                    ) : null}
                     <span
-                      className={`ed-underline text-2xl md:text-3xl block ${
-                        active ? "is-active text-ink" : "text-ink-muted"
-                      }`}
+                      className={`ed-underline text-2xl md:text-3xl ${
+                        marca.logoUrl ? "hidden" : "block"
+                      } ${active ? "is-active text-ink" : "text-ink-muted"}`}
                       style={{
                         fontFamily: "var(--font-fraunces)",
                         fontVariationSettings: '"opsz" 100, "SOFT" 50',
@@ -267,9 +293,12 @@ export default function Home() {
               >
                 <div className="lg:col-span-8 relative overflow-hidden bg-bone-deep aspect-[4/3] lg:aspect-[16/10]">
                   <img
-                    src="/car-placeholder.svg"
+                    src={featured.imagenUrl || "/car-placeholder.svg"}
                     alt={`${featured.marca} ${featured.modelo}`}
                     className="w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.04]"
+                    onError={(e) => {
+                      e.currentTarget.src = "/car-placeholder.svg";
+                    }}
                   />
                   <div className="absolute top-5 left-5 kicker bg-bone/90 px-3 py-1.5">
                     Pieza destacada
@@ -328,9 +357,12 @@ export default function Home() {
                   >
                     <div className="relative overflow-hidden bg-bone-deep aspect-[4/3] mb-5">
                       <img
-                        src="/car-placeholder.svg"
+                        src={coche.imagenUrl || "/car-placeholder.svg"}
                         alt={`${coche.marca} ${coche.modelo}`}
                         className="w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.05]"
+                        onError={(e) => {
+                          e.currentTarget.src = "/car-placeholder.svg";
+                        }}
                       />
                       <span
                         className={`absolute top-4 right-4 kicker px-2.5 py-1 ${

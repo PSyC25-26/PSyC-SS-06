@@ -13,6 +13,7 @@ interface Coche {
   precio: number;
   anio: number;
   stock: number;
+  imagenUrl?: string;
 }
 
 export default function CocheDetalle() {
@@ -102,9 +103,12 @@ export default function CocheDetalle() {
           {/* Imagen, ocupa lo grande */}
           <div className="col-span-12 lg:col-span-8 relative bg-bone-deep aspect-[4/3] lg:aspect-[16/11] overflow-hidden">
             <img
-              src="/car-placeholder.svg"
+              src={coche.imagenUrl || "/car-placeholder.svg"}
               alt={`${coche.marca} ${coche.modelo}`}
               className="w-full h-full object-cover"
+              onError={(e) => {
+                e.currentTarget.src = "/car-placeholder.svg";
+              }}
             />
             <div className="absolute top-5 left-5 kicker bg-bone/90 px-3 py-1.5">
               {coche.marca} · {coche.anio}

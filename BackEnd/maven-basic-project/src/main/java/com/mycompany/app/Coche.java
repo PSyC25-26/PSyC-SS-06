@@ -17,6 +17,7 @@ public class Coche {
     private double precio;
     private int anio;
     private int stock;
+    private String imagenUrl;
 
     public Coche() {
     }
@@ -41,4 +42,6 @@ public class Coche {
     public void setAnio(int anio) { this.anio = anio; }
     public int getStock() { return stock; }
     public void setStock(int stock) { this.stock = stock; }
+    public String getImagenUrl() { return imagenUrl; }
+    public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
 }

@@ -84,6 +84,7 @@ public class MarcaController {
 
         marcaExistente.setName(marcaActualizada.getName());
         marcaExistente.setCountry(marcaActualizada.getCountry());
+        marcaExistente.setLogoUrl(marcaActualizada.getLogoUrl());
 
         Marca marcaGuardada = marcaRepository.save(marcaExistente);
         return new ResponseEntity<>(marcaGuardada, HttpStatus.OK);

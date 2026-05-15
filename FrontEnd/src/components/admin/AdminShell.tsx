@@ -151,6 +151,12 @@ export default function AdminShell({ children }: AdminShellProps) {
               Inventario
             </Link>
             <Link
+              href="/admin/marcas"
+              className={`tab ${isActive("/admin/marcas") ? "is-active" : ""}`}
+            >
+              Marcas
+            </Link>
+            <Link
               href="/admin/usuarios"
               className={`tab ${
                 isActive("/admin/usuarios") ? "is-active" : ""
@@ -197,6 +203,14 @@ export default function AdminShell({ children }: AdminShellProps) {
             }`}
           >
             Inventario
+          </Link>
+          <Link
+            href="/admin/marcas"
+            className={`tab shrink-0 ${
+              isActive("/admin/marcas") ? "is-active" : ""
+            }`}
+          >
+            Marcas
           </Link>
           <Link
             href="/admin/usuarios"

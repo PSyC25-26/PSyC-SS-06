@@ -109,4 +109,84 @@ public class MarcaControllerTest {
         assertTrue(respuesta.getBody().isEmpty());
         verify(marcaRepository, times(1)).findByCountry("Italia");
     }
+
+    @Test
+    void testCrearMarcaNueva() {
+        Marca nueva = new Marca("Seat", "España");
+        when(marcaRepository.findByName("Seat")).thenReturn(Optional.empty());
+        when(marcaRepository.save(nueva)).thenReturn(nueva);
+
+        ResponseEntity<?> respuesta = marcaController.crearMarca(nueva);
+
+        assertEquals(HttpStatus.CREATED, respuesta.getStatusCode());
+        assertSame(nueva, respuesta.getBody());
+        verify(marcaRepository, times(1)).save(nueva);
+    }
+
+    @Test
+    void testCrearMarcaNombreDuplicado() {
+        Marca duplicada = new Marca("Toyota", "Japon");
+        when(marcaRepository.findByName("Toyota")).thenReturn(Optional.of(toyota));
+
+        ResponseEntity<?> respuesta = marcaController.crearMarca(duplicada);
+
+        assertEquals(HttpStatus.CONFLICT, respuesta.getStatusCode());
+        verify(marcaRepository, never()).save(any(Marca.class));
+    }
+
+    @Test
+    void testActualizarMarcaExistente() {
+        Marca cambios = new Marca("Toyota", "Japón actualizado");
+        when(marcaRepository.findById(1L)).thenReturn(Optional.of(toyota));
+        when(marcaRepository.save(toyota)).thenReturn(toyota);
+
+        ResponseEntity<?> respuesta = marcaController.actualizarMarca(1L, cambios);
+
+        assertEquals(HttpStatus.OK, respuesta.getStatusCode());
+        assertEquals("Japón actualizado", toyota.getCountry());
+        verify(marcaRepository, times(1)).save(toyota);
+    }
+
+    @Test
+    void testActualizarMarcaInexistente() {
+        Marca cambios = new Marca("Fake", "Pais");
+        when(marcaRepository.findById(99L)).thenReturn(Optional.empty());
+
+        ResponseEntity<?> respuesta = marcaController.actualizarMarca(99L, cambios);
+
+        assertEquals(HttpStatus.NOT_FOUND, respuesta.getStatusCode());
+        verify(marcaRepository, never()).save(any(Marca.class));
+    }
+
+    @Test
+    void testActualizarMarcaConNombreYaUsado() {
+        Marca cambios = new Marca("Ford", "Japon");
+        when(marcaRepository.findById(1L)).thenReturn(Optional.of(toyota));
+        when(marcaRepository.findByName("Ford")).thenReturn(Optional.of(ford));
+
+        ResponseEntity<?> respuesta = marcaController.actualizarMarca(1L, cambios);
+
+        assertEquals(HttpStatus.CONFLICT, respuesta.getStatusCode());
+        verify(marcaRepository, never()).save(any(Marca.class));
+    }
+
+    @Test
+    void testEliminarMarcaExistente() {
+        when(marcaRepository.findById(1L)).thenReturn(Optional.of(toyota));
+
+        ResponseEntity<Void> respuesta = marcaController.eliminarMarca(1L);
+
+        assertEquals(HttpStatus.NO_CONTENT, respuesta.getStatusCode());
+        verify(marcaRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    void testEliminarMarcaInexistente() {
+        when(marcaRepository.findById(99L)).thenReturn(Optional.empty());
+
+        ResponseEntity<Void> respuesta = marcaController.eliminarMarca(99L);
+
+        assertEquals(HttpStatus.NOT_FOUND, respuesta.getStatusCode());
+        verify(marcaRepository, never()).deleteById(anyLong());
+    }
 }

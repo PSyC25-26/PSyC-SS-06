@@ -1,7 +1,6 @@
 package com.mycompany.app.security;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,8 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.crypto.SecretKey;
 import java.lang.reflect.Field;
-import java.security.Key;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -84,13 +83,13 @@ public class JwtServiceTest {
         String secretKey = (String) secretField.get(null);
 
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        Key key = Keys.hmacShaKeyFor(keyBytes);
+        SecretKey key = Keys.hmacShaKeyFor(keyBytes);
 
         return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date(System.currentTimeMillis() - 1000 * 60 * 10))
-                .setExpiration(new Date(System.currentTimeMillis() - 1000 * 60 * 5))
-                .signWith(key, SignatureAlgorithm.HS256)
+                .subject(username)
+                .issuedAt(new Date(System.currentTimeMillis() - 1000 * 60 * 10))
+                .expiration(new Date(System.currentTimeMillis() - 1000 * 60 * 5))
+                .signWith(key)
                 .compact();
     }
 }

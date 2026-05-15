@@ -2,15 +2,13 @@ package com.mycompany.app.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
-import org.springframework.beans.factory.annotation.Value; // para @Value
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.security.Key;
+import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.function.Function;
@@ -22,22 +20,18 @@ public class JwtService {
     // Clave secreta HS256 [mínimo 256 bits / 32 caracteres]
     private static final String SECRET_KEY = "InsertarAquiClaveOmegaSecretaOmegaLargaEpicaQueContieneAlMenos256BitsDeCaracteresNormalesSinTildesNiEspaciosYTalYCualCreoQueSeEntiendeXd";
 
-    // Inyectar valor desde application.properties si se añade ahí
-    // @Value("${jwt.secret}")
-    // private String secretKey;
-
     public String generateToken(UserDetails userDetails) {
         int duracion = 1000 * 60 * 5; // tiempo en milisegundos que el token durará hasta el timeout, actualmente 5 minutos
         return Jwts.builder()
-                .setClaims(new HashMap<>())
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + duracion))
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                .claims(new HashMap<>())
+                .subject(userDetails.getUsername())
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + duracion))
+                .signWith(getSignInKey())
                 .compact();
     }
 
-    private Key getSignInKey() {
+    private SecretKey getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
     }
@@ -57,13 +51,13 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration).before(new Date());
     }
 
-    
+
     private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = Jwts.parserBuilder()
-                .setSigningKey(getSignInKey())
+        final Claims claims = Jwts.parser()
+                .verifyWith(getSignInKey())
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
         return claimsResolver.apply(claims);
     }
 }
